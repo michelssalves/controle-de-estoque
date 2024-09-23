@@ -4,205 +4,188 @@
       <md-table-toolbar>
         <div class="md-toolbar-section-start">
           <h1 class="md-title">Abastecimentos</h1>
-        </div>   
+        </div>
         <md-field md-clearable class="md-toolbar-section-end">
           <md-input placeholder="Search by name..." v-model="search" @input="searchOnTable" />
-  
         </md-field>
-        <md class="md-toolbar-section-end">
-          <md-button class="md-fab md-mini md-primary">
-          <md-icon>add</md-icon>
+        <div class="md-toolbar-section-end">
+          <md-button class="md-fab md-mini md-primary" @click="openModal">
+            <md-icon>add</md-icon>
           </md-button>
-        </md>
+        </div>
       </md-table-toolbar>
-      <md-table-row slot="md-table-row" slot-scope="{ item }">
+      <md-table-row slot="md-table-row" slot-scope="{ item }" @click="editAbastecimento(item)">
         <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
-        <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
-        <md-table-cell md-label="Email" md-sort-by="email">{{ item.email }}</md-table-cell>
-        <md-table-cell md-label="Gender" md-sort-by="gender">{{ item.gender }}</md-table-cell>
-        <md-table-cell md-label="Job Title" md-sort-by="title">{{ item.title }}</md-table-cell>
+        <md-table-cell md-label="Placa" md-sort-by="placa">{{ item.placa }}</md-table-cell>
+        <md-table-cell md-label="Km" md-sort-by="km">{{ item.km }}</md-table-cell>
+        <md-table-cell md-label="Hr" md-sort-by="hr">{{ item.hr }}</md-table-cell>
+        <md-table-cell md-label="Litros" md-sort-by="litros">{{ item.litros }}</md-table-cell>
+        <md-table-cell md-label="Veículo" md-sort-by="veiculo">{{ item.veiculo }}</md-table-cell>
+        <md-table-cell>{{ item.data }}</md-table-cell>
       </md-table-row>
     </md-table>
+
+    <md-dialog :md-active.sync="isModalOpen" class="custom-modal">
+      <md-dialog-title>Novo Abastecimento</md-dialog-title>
+      <md-dialog-content>
+        <md-field>
+          <label>Placa</label>
+          <md-select v-model="newAbastecimento.placa" @input="updateVeiculo">
+            <md-option v-for="placa in Object.keys(placaVeiculoMap)" :key="placa" :value="placa">{{ placa }}</md-option>
+          </md-select>
+        </md-field>
+        <md-field>
+          <label>Km</label>
+          <md-input v-model="newAbastecimento.km" type="number"></md-input>
+        </md-field>
+        <md-field>
+          <label>Hr</label>
+          <md-input v-model="newAbastecimento.hr" type="number"></md-input>
+        </md-field>
+        <md-field>
+          <label>Litros</label>
+          <md-input v-model="newAbastecimento.litros" type="number"></md-input>
+        </md-field>
+        <md-field>
+          <label>Veículo</label>
+          <md-input v-model="newAbastecimento.veiculo"></md-input>
+        </md-field>
+        <md-field>
+          <label>Data</label>
+          <md-input v-model="newAbastecimento.data" type="date" required></md-input>
+        </md-field>
+      </md-dialog-content>
+      <md-dialog-actions>
+        <md-button class="md-primary" @click="saveAbastecimento">
+          {{ isEditing ? 'Salvar' : 'Adicionar' }}
+        </md-button>
+        <md-button class="md-secondary" @click="closeModal">Cancelar</md-button>
+      </md-dialog-actions>
+    </md-dialog>
   </div>
 </template>
 
 <script>
-  const toLower = text => {
-    return text.toString().toLowerCase()
-  }
-
-  const searchByName = (items, term) => {
-    if (term) {
-      return items.filter(item => toLower(item.name).includes(toLower(term)))
-    }
-
-    return items
-  }
-
-  export default {
-    name: 'AbastecimentosView',
-    data: () => ({
-      search: null,
-      searched: [],
-      users: [
-        {
-          id: 1,
-          name: "Shawna Dubbin",
-          email: "sdubbin0@geocities.com",
-          gender: "Male",
-          title: "Assistant Media Planner"
-        },
-        {
-          id: 2,
-          name: "Odette Demageard",
-          email: "odemageard1@spotify.com",
-          gender: "Female",
-          title: "Account Coordinator"
-        },
-        {
-          id: 3,
-          name: "Vera Taleworth",
-          email: "vtaleworth2@google.ca",
-          gender: "Male",
-          title: "Community Outreach Specialist"
-        },
-        {
-          id: 4,
-          name: "Lonnie Izkovitz",
-          email: "lizkovitz3@youtu.be",
-          gender: "Female",
-          title: "Operator"
-        },
-        {
-          id: 5,
-          name: "Thatcher Stave",
-          email: "tstave4@reference.com",
-          gender: "Male",
-          title: "Software Test Engineer III"
-        },
-        {
-          id: 6,
-          name: "Karim Chipping",
-          email: "kchipping5@scribd.com",
-          gender: "Female",
-          title: "Safety Technician II"
-        },
-        {
-          id: 7,
-          name: "Helge Holyard",
-          email: "hholyard6@howstuffworks.com",
-          gender: "Female",
-          title: "Internal Auditor"
-        },
-        {
-          id: 8,
-          name: "Rod Titterton",
-          email: "rtitterton7@nydailynews.com",
-          gender: "Male",
-          title: "Technical Writer"
-        },
-        {
-          id: 9,
-          name: "Gawen Applewhite",
-          email: "gapplewhite8@reverbnation.com",
-          gender: "Female",
-          title: "GIS Technical Architect"
-        },
-        {
-          id: 10,
-          name: "Nero Mulgrew",
-          email: "nmulgrew9@plala.or.jp",
-          gender: "Female",
-          title: "Staff Scientist"
-        },
-        {
-          id: 11,
-          name: "Cybill Rimington",
-          email: "crimingtona@usnews.com",
-          gender: "Female",
-          title: "Assistant Professor"
-        },
-        {
-          id: 12,
-          name: "Maureene Eggleson",
-          email: "megglesonb@elpais.com",
-          gender: "Male",
-          title: "Recruiting Manager"
-        },
-        {
-          id: 13,
-          name: "Cortney Caulket",
-          email: "ccaulketc@cbsnews.com",
-          gender: "Male",
-          title: "Safety Technician IV"
-        },
-        {
-          id: 14,
-          name: "Selig Swynfen",
-          email: "sswynfend@cpanel.net",
-          gender: "Female",
-          title: "Environmental Specialist"
-        },
-        {
-          id: 15,
-          name: "Ingar Raggles",
-          email: "iragglese@cbc.ca",
-          gender: "Female",
-          title: "VP Sales"
-        },
-        {
-          id: 16,
-          name: "Karmen Mines",
-          email: "kminesf@topsy.com",
-          gender: "Male",
-          title: "Administrative Officer"
-        },
-        {
-          id: 17,
-          name: "Salome Judron",
-          email: "sjudrong@jigsy.com",
-          gender: "Male",
-          title: "Staff Scientist"
-        },
-        {
-          id: 18,
-          name: "Clarinda Marieton",
-          email: "cmarietonh@theatlantic.com",
-          gender: "Male",
-          title: "Paralegal"
-        },
-        {
-          id: 19,
-          name: "Paxon Lotterington",
-          email: "plotteringtoni@netvibes.com",
-          gender: "Female",
-          title: "Marketing Assistant"
-        },
-        {
-          id: 20,
-          name: "Maura Thoms",
-          email: "mthomsj@webeden.co.uk",
-          gender: "Male",
-          title: "Actuary"
-        }
-      ]
-    }),
-    methods: {
-      newUser () {
-        window.alert('Noop')
-      },
-      searchOnTable () {
-        this.searched = searchByName(this.users, this.search)
-      }
+export default {
+  name: 'AbastecimentosView',
+  data: () => ({
+    search: null,
+    searched: [],
+    abastecimentos: [],
+    isModalOpen: false,
+    isEditing: false,
+    newAbastecimento: {
+      id: null,
+      placa: '',
+      km: '',
+      hr: '',
+      litros: '',
+      veiculo: '',
+      data: ''
     },
-    created () {
-      this.searched = this.users
+    placaVeiculoMap: {
+      'ABC-123': 'CAMINHÃO COMPACTADOR',
+      'XYZ-789': 'CAMINHÃO BETONEIRA',
+      'DEF-456': 'CARRO UTILITÁRIO'
     }
+  }),
+  methods: {
+    openModal() {
+      this.isModalOpen = true;
+    },
+    closeModal() {
+      this.isModalOpen = false;
+      this.resetForm();
+    },
+    addAbastecimento() {
+      const { placa, km, hr, litros, veiculo, data } = this.newAbastecimento;
+      if (!placa || !km || !hr || !litros || !veiculo || !data) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+      }
+      const newItem = {
+        id: this.abastecimentos.length + 1,
+        ...this.newAbastecimento
+      };
+      this.abastecimentos.push(newItem);
+      this.saveToLocalStorage();
+      this.searchOnTable();
+      this.closeModal();
+    },
+    editAbastecimento(item) {
+      this.newAbastecimento = { ...item };
+      this.isEditing = true;
+      this.isModalOpen = true;
+    },
+    saveAbastecimento() {
+  const { placa, km, hr, litros, veiculo, data, id } = this.newAbastecimento;
+  if (!placa || !km || !hr || !litros || !veiculo || !data) {
+    alert('Por favor, preencha todos os campos.');
+    return;
   }
+
+  if (this.isEditing) {
+    const index = this.abastecimentos.findIndex(abastecimento => abastecimento.id === id);
+    if (index !== -1) {
+      this.abastecimentos.splice(index, 1, { ...this.newAbastecimento });
+    }
+  } else {
+    this.newAbastecimento.id = this.abastecimentos.length > 0 
+      ? Math.max(...this.abastecimentos.map(item => item.id)) + 1 
+      : 1;
+    this.abastecimentos.push({ ...this.newAbastecimento });
+  }
+
+  this.saveToLocalStorage();
+  this.searchOnTable(); // Atualiza a tabela após salvar
+  this.closeModal();
+},
+    saveToLocalStorage() {
+      localStorage.setItem('abastecimentos', JSON.stringify(this.abastecimentos));
+      console.log('Dados salvos na Local Storage:', this.abastecimentos);
+    },
+    resetForm() {
+      this.newAbastecimento = {
+        placa: '',
+        km: '',
+        hr: '',
+        litros: '',
+        veiculo: '',
+        data: ''
+      };
+      this.isEditing = false; // Reseta o estado de edição
+    },
+    searchOnTable() {
+      this.searched = this.abastecimentos.filter(item =>
+        item.placa.toLowerCase().includes(this.search ? this.search.toLowerCase() : '')
+      );
+    },
+    updateVeiculo() {
+      const selectedPlaca = this.newAbastecimento.placa;
+      this.newAbastecimento.veiculo = this.placaVeiculoMap[selectedPlaca] || '';
+    },
+    loadFromLocalStorage() {
+      const savedData = localStorage.getItem('abastecimentos');
+      if (savedData) {
+        this.abastecimentos = JSON.parse(savedData);
+      }
+      this.searchOnTable();
+    },
+    clearLocalStorage() {
+      localStorage.clear();
+    },
+  },
+  created() {
+    this.loadFromLocalStorage();
+  }
+};
 </script>
 
 <style lang="scss" scoped>
   .md-field {
     max-width: 300px;
+  }
+  .custom-modal {
+    max-width: 1900px; /* Aumente conforme necessário */
   }
 </style>
