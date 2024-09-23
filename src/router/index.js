@@ -1,19 +1,16 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-//import HomeView from '../views/HomeView.vue'
-//import AppView from '../App.vue'
+//import AppView from '../App.vue' // App com NavBar sempre visível
 import AbastecimentoView from '../components/Abastecimentos.vue'
 import VeiculosView from '../components/Veiculos.vue'
-
-
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'abastecimentos',
-    component: AbastecimentoView
+    path: '/',  // Define rota inicial
+    name: 'home',
+    component: AbastecimentoView  // ou algum componente de entrada
   },
   {
     path: '/abastecimentos',

@@ -5,6 +5,8 @@ import store from './store'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
+import '@fortawesome/fontawesome-free/css/all.css';
+
 Vue.use(VueMaterial)
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'

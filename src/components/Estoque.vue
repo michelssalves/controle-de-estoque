@@ -40,7 +40,7 @@
   }
 
   export default {
-    name: 'AbastecimentosView',
+    name: 'EstoqueView',
     data: () => ({
       search: null,
       searched: [],
