@@ -81,7 +81,7 @@ export default {
       hr: '',
       litros: '',
       veiculo: '',
-      data: ''
+      data: new Date().toISOString().split('T')[0] 
     },
     placaVeiculoMap: {
       'ABC-123': 'CAMINHÃO COMPACTADOR',
@@ -151,7 +151,7 @@ export default {
         hr: '',
         litros: '',
         veiculo: '',
-        data: ''
+        data: new Date().toISOString().split('T')[0] 
       };
       this.isEditing = false; // Reseta o estado de edição
     },
@@ -182,10 +182,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .md-field {
-    max-width: 300px;
-  }
-  .custom-modal {
-    max-width: 1900px; /* Aumente conforme necessário */
-  }
+
 </style>
